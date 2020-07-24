@@ -49,6 +49,7 @@ public abstract class AbstractBeanFactoryTests {
 
 	/**
 	 * Roderick bean inherits from rod, overriding name only.
+	 * 调试Spring初始化Bean流程
 	 */
 	@Test
 	public void inheritance() {

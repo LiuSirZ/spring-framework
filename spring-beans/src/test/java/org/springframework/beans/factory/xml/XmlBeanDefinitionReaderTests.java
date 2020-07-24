@@ -96,11 +96,18 @@ public class XmlBeanDefinitionReaderTests {
 		testBeanDefinitions(registry);
 	}
 
+	/**
+	 * 加载xml配置bean  创建BeanDefinitions
+	 */
 	@Test
 	public void withFreshInputStream() {
+		//自定义简单bean定义注册类
 		SimpleBeanDefinitionRegistry registry = new SimpleBeanDefinitionRegistry();
+		//加载配置文件地址
 		Resource resource = new ClassPathResource("test.xml", getClass());
+		//执行加载方法
 		new XmlBeanDefinitionReader(registry).loadBeanDefinitions(resource);
+		//测试bean定义
 		testBeanDefinitions(registry);
 	}
 
