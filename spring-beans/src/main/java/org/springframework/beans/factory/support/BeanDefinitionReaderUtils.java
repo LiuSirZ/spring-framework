@@ -60,7 +60,9 @@ public abstract class BeanDefinitionReaderUtils {
 		GenericBeanDefinition bd = new GenericBeanDefinition();
 		bd.setParentName(parentName);
 		if (className != null) {
+			//如果没有传入类加载器 保存bean名
 			if (classLoader != null) {
+				//反射获取类实现
 				bd.setBeanClass(ClassUtils.forName(className, classLoader));
 			}
 			else {

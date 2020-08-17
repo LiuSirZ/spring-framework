@@ -150,6 +150,7 @@ final class JdkDynamicAopProxy implements AopProxy, InvocationHandler, Serializa
 	 * Implementation of {@code InvocationHandler.invoke}.
 	 * <p>Callers will see exactly the exception thrown by the target,
 	 * unless a hook method throws an exception.
+	 * 调用者将确切地看到目标抛出的异常，除非钩子方法抛出异常。
 	 */
 	@Override
 	@Nullable
@@ -199,8 +200,11 @@ final class JdkDynamicAopProxy implements AopProxy, InvocationHandler, Serializa
 			// reflective invocation of the target, and avoid creating a MethodInvocation.
 			if (chain.isEmpty()) {
 				// We can skip creating a MethodInvocation: just invoke the target directly
+				// 我们可以跳过创建MethodInvocation的方法：直接调用目标
 				// Note that the final invoker must be an InvokerInterceptor so we know it does
+				// 请注意，最终调用者必须是InvokerInterceptor，
 				// nothing but a reflective operation on the target, and no hot swapping or fancy proxying.
+				// 因此我们知道只是对目标的反射操作，没有热插拔或花哨的代理。
 				Object[] argsToUse = AopProxyUtils.adaptArgumentsIfNecessary(method, args);
 				retVal = AopUtils.invokeJoinpointUsingReflection(target, method, argsToUse);
 			}

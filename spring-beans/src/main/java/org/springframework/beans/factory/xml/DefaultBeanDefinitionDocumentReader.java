@@ -93,6 +93,7 @@ public class DefaultBeanDefinitionDocumentReader implements BeanDefinitionDocume
 	@Override
 	public void registerBeanDefinitions(Document doc, XmlReaderContext readerContext) {
 		this.readerContext = readerContext;
+		//注册bean定义
 		doRegisterBeanDefinitions(doc.getDocumentElement());
 	}
 
@@ -116,6 +117,7 @@ public class DefaultBeanDefinitionDocumentReader implements BeanDefinitionDocume
 
 	/**
 	 * Register each bean definition within the given root {@code <beans/>} element.
+	 * 在给定的根{@code <beans />}元素中注册每个bean定义
 	 */
 	@SuppressWarnings("deprecation")  // for Environment.acceptsProfiles(String...)
 	protected void doRegisterBeanDefinitions(Element root) {
@@ -126,15 +128,21 @@ public class DefaultBeanDefinitionDocumentReader implements BeanDefinitionDocume
 		// then ultimately reset this.delegate back to its original (parent) reference.
 		// this behavior emulates a stack of delegates without actually necessitating one.
 		BeanDefinitionParserDelegate parent = this.delegate;
+		//创建依赖对象 主要包含 类加载方式 初始化方法 销毁方法等。
 		this.delegate = createDelegate(getReaderContext(), root, parent);
 
+		//判断是否是默认的命名空间
 		if (this.delegate.isDefaultNamespace(root)) {
+			//获取 首选项属性
 			String profileSpec = root.getAttribute(PROFILE_ATTRIBUTE);
 			if (StringUtils.hasText(profileSpec)) {
+				//解析首选项
 				String[] specifiedProfiles = StringUtils.tokenizeToStringArray(
 						profileSpec, BeanDefinitionParserDelegate.MULTI_VALUE_ATTRIBUTE_DELIMITERS);
 				// We cannot use Profiles.of(...) since profile expressions are not supported
+				// 我们无法使用Profiles.of（...），因为不支持配置文件表达式
 				// in XML config. See SPR-12458 for details.
+				// 在XML配置中。 有关详细信息，请参见SPR-12458。
 				if (!getReaderContext().getEnvironment().acceptsProfiles(specifiedProfiles)) {
 					if (logger.isDebugEnabled()) {
 						logger.debug("Skipped XML bean definition file due to specified profiles [" + profileSpec +
@@ -162,16 +170,21 @@ public class DefaultBeanDefinitionDocumentReader implements BeanDefinitionDocume
 
 	/**
 	 * Parse the elements at the root level in the document:
+	 * 在文档的根级别解析元素："import", "alias", "bean".
 	 * "import", "alias", "bean".
-	 * @param root the DOM root element of the document
+	 * @param root the DOM root element of the document 文件的DOM节点
 	 */
 	protected void parseBeanDefinitions(Element root, BeanDefinitionParserDelegate delegate) {
+		//判断是否是默认命名空间
 		if (delegate.isDefaultNamespace(root)) {
+			//获取所有子节点
 			NodeList nl = root.getChildNodes();
 			for (int i = 0; i < nl.getLength(); i++) {
 				Node node = nl.item(i);
+				//如果node是一个Element
 				if (node instanceof Element) {
 					Element ele = (Element) node;
+					//判断Element是否是默认命名空间
 					if (delegate.isDefaultNamespace(ele)) {
 						parseDefaultElement(ele, delegate);
 					}
@@ -187,17 +200,21 @@ public class DefaultBeanDefinitionDocumentReader implements BeanDefinitionDocume
 	}
 
 	private void parseDefaultElement(Element ele, BeanDefinitionParserDelegate delegate) {
+		//判断节点名称 分类处理
 		if (delegate.nodeNameEquals(ele, IMPORT_ELEMENT)) {
+			//"import"
 			importBeanDefinitionResource(ele);
 		}
 		else if (delegate.nodeNameEquals(ele, ALIAS_ELEMENT)) {
+			//"alias"
 			processAliasRegistration(ele);
 		}
 		else if (delegate.nodeNameEquals(ele, BEAN_ELEMENT)) {
+			//"bean"
 			processBeanDefinition(ele, delegate);
 		}
 		else if (delegate.nodeNameEquals(ele, NESTED_BEANS_ELEMENT)) {
-			// recurse
+			// recurse "beans"
 			doRegisterBeanDefinitions(ele);
 		}
 	}
@@ -300,7 +317,9 @@ public class DefaultBeanDefinitionDocumentReader implements BeanDefinitionDocume
 
 	/**
 	 * Process the given bean element, parsing the bean definition
+	 *
 	 * and registering it with the registry.
+	 * 处理给定的bean元素，解析bean定义，并在注册表中注册。
 	 */
 	protected void processBeanDefinition(Element ele, BeanDefinitionParserDelegate delegate) {
 		BeanDefinitionHolder bdHolder = delegate.parseBeanDefinitionElement(ele);

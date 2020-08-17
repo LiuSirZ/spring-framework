@@ -399,6 +399,9 @@ public class BeanDefinitionParserDelegate {
 	 * Parses the supplied {@code <bean>} element. May return {@code null}
 	 * if there were errors during parse. Errors are reported to the
 	 * {@link org.springframework.beans.factory.parsing.ProblemReporter}.
+	 *
+	 * 译：解析一个bean元素，如果在处理过程中出现错误可能返回null 并将错误报告给
+	 * {@link org.springframework.beans.factory.parsing.ProblemReporter}.
 	 */
 	@Nullable
 	public BeanDefinitionHolder parseBeanDefinitionElement(Element ele) {
@@ -412,25 +415,37 @@ public class BeanDefinitionParserDelegate {
 	 */
 	@Nullable
 	public BeanDefinitionHolder parseBeanDefinitionElement(Element ele, @Nullable BeanDefinition containingBean) {
+		//获取id属性
 		String id = ele.getAttribute(ID_ATTRIBUTE);
+		//获取name属性
 		String nameAttr = ele.getAttribute(NAME_ATTRIBUTE);
-
+		//别名集合
 		List<String> aliases = new ArrayList<>();
+		//如果name存在 并且可以是多个 使用","隔开
 		if (StringUtils.hasLength(nameAttr)) {
 			String[] nameArr = StringUtils.tokenizeToStringArray(nameAttr, MULTI_VALUE_ATTRIBUTE_DELIMITERS);
 			aliases.addAll(Arrays.asList(nameArr));
 		}
 
 		String beanName = id;
+		//如果id为空，别名集合不为空
 		if (!StringUtils.hasText(beanName) && !aliases.isEmpty()) {
+			//从别名集合中取第一个别名 为bean名称
 			beanName = aliases.remove(0);
 			if (logger.isTraceEnabled()) {
+				//日志输出没有指定id属性
 				logger.trace("No XML 'id' specified - using '" + beanName +
 						"' as bean name and " + aliases + " as aliases");
 			}
 		}
 
+		//bean定义为空
 		if (containingBean == null) {
+			/**
+			 * beanName id
+			 * aliases 别名集合
+			 * ele xml元素
+			 */
 			checkNameUniqueness(beanName, aliases, ele);
 		}
 
@@ -474,20 +489,27 @@ public class BeanDefinitionParserDelegate {
 	/**
 	 * Validate that the specified bean name and aliases have not been used already
 	 * within the current level of beans element nesting.
+	 * 译：验证在当前级别的bean元素嵌套中尚未使用指定的bean名称和别名。
 	 */
 	protected void checkNameUniqueness(String beanName, List<String> aliases, Element beanElement) {
 		String foundName = null;
 
+		//id存在 并且已使用的name已存在
 		if (StringUtils.hasText(beanName) && this.usedNames.contains(beanName)) {
 			foundName = beanName;
 		}
+
+		//上一步未发现 进行别名校验
 		if (foundName == null) {
 			foundName = CollectionUtils.findFirstMatch(this.usedNames, aliases);
 		}
+
+		//已存在 添加错误日志
 		if (foundName != null) {
 			error("Bean name '" + foundName + "' is already used in this <beans> element", beanElement);
 		}
 
+		//保存本地缓存 id和别名集合
 		this.usedNames.add(beanName);
 		this.usedNames.addAll(aliases);
 	}
@@ -502,30 +524,40 @@ public class BeanDefinitionParserDelegate {
 
 		this.parseState.push(new BeanEntry(beanName));
 
+		//解析class属性
 		String className = null;
 		if (ele.hasAttribute(CLASS_ATTRIBUTE)) {
 			className = ele.getAttribute(CLASS_ATTRIBUTE).trim();
 		}
+
+		//解析parent属性
 		String parent = null;
 		if (ele.hasAttribute(PARENT_ATTRIBUTE)) {
 			parent = ele.getAttribute(PARENT_ATTRIBUTE);
 		}
 
 		try {
+			//创建bean定义 此处利用反射真正生成类
 			AbstractBeanDefinition bd = createBeanDefinition(className, parent);
-
+			//解析bean定义属性
 			parseBeanDefinitionAttributes(ele, beanName, containingBean, bd);
+			//描述
 			bd.setDescription(DomUtils.getChildElementValueByTagName(ele, DESCRIPTION_ELEMENT));
-
+			//属性
 			parseMetaElements(ele, bd);
+			//lookup-method override
 			parseLookupOverrideSubElements(ele, bd.getMethodOverrides());
+			//replaced-method override
 			parseReplacedMethodSubElements(ele, bd.getMethodOverrides());
-
+			//构造
 			parseConstructorArgElements(ele, bd);
+			//属性
 			parsePropertyElements(ele, bd);
+			//
 			parseQualifierElements(ele, bd);
 
 			bd.setResource(this.readerContext.getResource());
+
 			bd.setSource(extractSource(ele));
 
 			return bd;
@@ -548,35 +580,37 @@ public class BeanDefinitionParserDelegate {
 
 	/**
 	 * Apply the attributes of the given bean element to the given bean * definition.
+	 * 译：将给定bean元素的属性应用于给定bean定义。
 	 * @param ele bean declaration element
 	 * @param beanName bean name
-	 * @param containingBean containing bean definition
+	 * @param containingBean containing bean definition 包含bean定义
 	 * @return a bean definition initialized according to the bean element attributes
 	 */
 	public AbstractBeanDefinition parseBeanDefinitionAttributes(Element ele, String beanName,
 			@Nullable BeanDefinition containingBean, AbstractBeanDefinition bd) {
-
+		//是否存在1.x 旧属性
 		if (ele.hasAttribute(SINGLETON_ATTRIBUTE)) {
 			error("Old 1.x 'singleton' attribute in use - upgrade to 'scope' declaration", ele);
 		}
 		else if (ele.hasAttribute(SCOPE_ATTRIBUTE)) {
+			//设置Scope 单例 多例
 			bd.setScope(ele.getAttribute(SCOPE_ATTRIBUTE));
 		}
 		else if (containingBean != null) {
 			// Take default from containing bean in case of an inner bean definition.
 			bd.setScope(containingBean.getScope());
 		}
-
+		//抽象
 		if (ele.hasAttribute(ABSTRACT_ATTRIBUTE)) {
 			bd.setAbstract(TRUE_VALUE.equals(ele.getAttribute(ABSTRACT_ATTRIBUTE)));
 		}
-
+		//懒加载
 		String lazyInit = ele.getAttribute(LAZY_INIT_ATTRIBUTE);
 		if (isDefaultValue(lazyInit)) {
 			lazyInit = this.defaults.getLazyInit();
 		}
 		bd.setLazyInit(TRUE_VALUE.equals(lazyInit));
-
+		//自动注入
 		String autowire = ele.getAttribute(AUTOWIRE_ATTRIBUTE);
 		bd.setAutowireMode(getAutowireMode(autowire));
 
@@ -645,6 +679,7 @@ public class BeanDefinitionParserDelegate {
 
 	/**
 	 * Parse the meta elements underneath the given element, if any.
+	 * 解析给定元素下面的meta元素（如果有）。
 	 */
 	public void parseMetaElements(Element ele, BeanMetadataAttributeAccessor attributeAccessor) {
 		NodeList nl = ele.getChildNodes();
@@ -1521,6 +1556,8 @@ public class BeanDefinitionParserDelegate {
 
 	/**
 	 * Determine whether the given URI indicates the default namespace.
+	 * 译：确定给定的URI是否指示默认名称空间。
+	 * BEANS_NAMESPACE_URI：http://www.springframework.org/schema/beans
 	 */
 	public boolean isDefaultNamespace(@Nullable String namespaceUri) {
 		return (!StringUtils.hasLength(namespaceUri) || BEANS_NAMESPACE_URI.equals(namespaceUri));

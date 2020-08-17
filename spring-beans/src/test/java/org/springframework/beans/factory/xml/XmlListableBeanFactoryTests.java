@@ -43,6 +43,9 @@ import static org.junit.Assert.*;
  * @since 09.11.2003
  */
 @SuppressWarnings({"rawtypes", "unchecked"})
+/**
+ * IOC调试
+ */
 public class XmlListableBeanFactoryTests extends AbstractListableBeanFactoryTests {
 
 	private DefaultListableBeanFactory parent;
@@ -68,7 +71,7 @@ public class XmlListableBeanFactoryTests extends AbstractListableBeanFactoryTest
 
 		this.factory = new DefaultListableBeanFactory(parent);
 		new XmlBeanDefinitionReader(this.factory).loadBeanDefinitions(new ClassPathResource("test.xml", getClass()));
-
+		//
 		this.factory.addBeanPostProcessor(new BeanPostProcessor() {
 			@Override
 			public Object postProcessBeforeInitialization(Object bean, String name) throws BeansException {

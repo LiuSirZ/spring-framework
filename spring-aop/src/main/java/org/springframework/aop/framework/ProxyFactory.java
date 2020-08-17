@@ -155,4 +155,9 @@ public class ProxyFactory extends ProxyCreatorSupport {
 		return proxyFactory.getProxy();
 	}
 
+	public static void main(String[] args) {
+		ProxyFactory proxyFactory = new ProxyFactory();
+		System.out.println(proxyFactory);
+	}
+
 }
