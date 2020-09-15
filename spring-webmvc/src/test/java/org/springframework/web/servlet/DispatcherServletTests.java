@@ -123,7 +123,7 @@ public class DispatcherServletTests {
 
 	@Test
 	public void invalidRequest() throws Exception {
-		MockHttpServletRequest request = new MockHttpServletRequest(getServletContext(), "GET", "/invalid.do");
+		MockHttpServletRequest request = new MockHttpServletRequest(getServletContext(), "GET", "/knownOnlyToParent.do");
 		MockHttpServletResponse response = new MockHttpServletResponse();
 		simpleDispatcherServlet.service(request, response);
 		assertTrue("Not forwarded", response.getForwardedUrl() == null);

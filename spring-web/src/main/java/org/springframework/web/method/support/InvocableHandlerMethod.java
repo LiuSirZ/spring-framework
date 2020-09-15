@@ -110,7 +110,9 @@ public class InvocableHandlerMethod extends HandlerMethod {
 
 	/**
 	 * Invoke the method after resolving its argument values in the context of the given request.
+	 * 在给定请求的上下文中解析其参数值后，调用该方法。
 	 * <p>Argument values are commonly resolved through
+	 * 参数值通常通过以下方式解析
 	 * {@link HandlerMethodArgumentResolver HandlerMethodArgumentResolvers}.
 	 * The {@code providedArgs} parameter however may supply argument values to be used directly,
 	 * i.e. without argument resolution. Examples of provided argument values include a
@@ -141,7 +143,9 @@ public class InvocableHandlerMethod extends HandlerMethod {
 	/**
 	 * Get the method argument values for the current request, checking the provided
 	 * argument values and falling back to the configured argument resolvers.
+	 * 获取当前请求的方法参数值，检查提供的参数值并返回配置的参数解析器。
 	 * <p>The resulting array will be passed into {@link #doInvoke}.
+	 * 结果数组将传递到
 	 * @since 5.1.2
 	 */
 	protected Object[] getMethodArgumentValues(NativeWebRequest request, @Nullable ModelAndViewContainer mavContainer,
@@ -151,7 +155,7 @@ public class InvocableHandlerMethod extends HandlerMethod {
 		if (ObjectUtils.isEmpty(parameters)) {
 			return EMPTY_ARGS;
 		}
-
+		//解析请求参数 封装为数组只作为方法执行参数 通过反射调用方法
 		Object[] args = new Object[parameters.length];
 		for (int i = 0; i < parameters.length; i++) {
 			MethodParameter parameter = parameters[i];

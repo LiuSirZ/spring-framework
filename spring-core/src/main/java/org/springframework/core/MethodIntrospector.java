@@ -93,8 +93,7 @@ public final class MethodIntrospector {
 	 * @return the selected methods, or an empty set in case of no match
 	 */
 	public static Set<Method> selectMethods(Class<?> targetType, final ReflectionUtils.MethodFilter methodFilter) {
-		return selectMethods(targetType,
-				(MetadataLookup<Boolean>) method -> (methodFilter.matches(method) ? Boolean.TRUE : null)).keySet();
+		return selectMethods(targetType,(MetadataLookup<Boolean>) method -> (methodFilter.matches(method) ? Boolean.TRUE : null)).keySet();
 	}
 
 	/**

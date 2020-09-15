@@ -778,6 +778,7 @@ public class WebMvcConfigurationSupport implements ApplicationContextAware, Serv
 	 * Adds a set of default HttpMessageConverter instances to the given list.
 	 * Subclasses can call this method from {@link #configureMessageConverters}.
 	 * @param messageConverters the list to add the default message converters to
+	 * 添加默认Http消息解析器
 	 */
 	protected final void addDefaultHttpMessageConverters(List<HttpMessageConverter<?>> messageConverters) {
 		StringHttpMessageConverter stringHttpMessageConverter = new StringHttpMessageConverter();

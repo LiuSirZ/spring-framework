@@ -17,6 +17,7 @@
 package org.springframework.web.servlet;
 
 import java.io.IOException;
+import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -294,6 +295,7 @@ public class DispatcherServlet extends FrameworkServlet {
 	}
 
 	/** Detect all HandlerMappings or just expect "handlerMapping" bean?. */
+	// 检测所有的HandlerMappings 或 仅期望的“ handlerMapping” bean
 	private boolean detectAllHandlerMappings = true;
 
 	/** Detect all HandlerAdapters or just expect "handlerAdapter" bean?. */
@@ -595,11 +597,13 @@ public class DispatcherServlet extends FrameworkServlet {
 
 		if (this.detectAllHandlerMappings) {
 			// Find all HandlerMappings in the ApplicationContext, including ancestor contexts.
+			// 从ApplicationContext中找到所有HandlerMappings 包括祖先上下文。
 			Map<String, HandlerMapping> matchingBeans =
 					BeanFactoryUtils.beansOfTypeIncludingAncestors(context, HandlerMapping.class, true, false);
 			if (!matchingBeans.isEmpty()) {
 				this.handlerMappings = new ArrayList<>(matchingBeans.values());
 				// We keep HandlerMappings in sorted order.
+				// 保证HandlerMappings处于有序
 				AnnotationAwareOrderComparator.sort(this.handlerMappings);
 			}
 		}
@@ -615,6 +619,7 @@ public class DispatcherServlet extends FrameworkServlet {
 
 		// Ensure we have at least one HandlerMapping, by registering
 		// a default HandlerMapping if no other mappings are found.
+		// 保证我们有至少一个HandlerMapping 如果没有其他匹配被发现 注册一个默认的HandlerMapping
 		if (this.handlerMappings == null) {
 			this.handlerMappings = getDefaultStrategies(context, HandlerMapping.class);
 			if (logger.isTraceEnabled()) {
@@ -1009,10 +1014,12 @@ public class DispatcherServlet extends FrameworkServlet {
 			Exception dispatchException = null;
 
 			try {
+				//检查是否上传文件
 				processedRequest = checkMultipart(request);
 				multipartRequestParsed = (processedRequest != request);
 
 				// Determine handler for the current request.
+				//获取当前请求的handler执行器链
 				mappedHandler = getHandler(processedRequest);
 				if (mappedHandler == null) {
 					noHandlerFound(processedRequest, response);
@@ -1020,9 +1027,11 @@ public class DispatcherServlet extends FrameworkServlet {
 				}
 
 				// Determine handler adapter for the current request.
+				// 确定当前请求的处理程序适配器。
 				HandlerAdapter ha = getHandlerAdapter(mappedHandler.getHandler());
 
 				// Process last-modified header, if supported by the handler.
+				// 如果处理程序支持，则处理最后修改的标头。
 				String method = request.getMethod();
 				boolean isGet = "GET".equals(method);
 				if (isGet || "HEAD".equals(method)) {
@@ -1032,11 +1041,13 @@ public class DispatcherServlet extends FrameworkServlet {
 					}
 				}
 
+				//应用注册拦截器的前置方法。
 				if (!mappedHandler.applyPreHandle(processedRequest, response)) {
 					return;
 				}
 
 				// Actually invoke the handler.
+				// 调用controller
 				mv = ha.handle(processedRequest, response, mappedHandler.getHandler());
 
 				if (asyncManager.isConcurrentHandlingStarted()) {

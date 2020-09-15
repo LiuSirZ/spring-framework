@@ -188,6 +188,7 @@ public class DefaultBeanDefinitionDocumentReader implements BeanDefinitionDocume
 					if (delegate.isDefaultNamespace(ele)) {
 						parseDefaultElement(ele, delegate);
 					}
+					//spring事务 命名空间 http://www.springframework.org/schema/tx
 					else {
 						delegate.parseCustomElement(ele);
 					}

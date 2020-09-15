@@ -24,6 +24,7 @@ import org.springframework.web.reactive.result.method.HandlerMethodArgumentResol
 
 /**
  * Helps to configure resolvers for Controller method arguments.
+ * 帮助配置控制器方法参数的解析器。
  *
  * @author Rossen Stoyanchev
  * @since 5.0

@@ -849,7 +849,7 @@ public class RequestMappingHandlerAdapter extends AbstractHandlerMethodAdapter
 	@Nullable
 	protected ModelAndView invokeHandlerMethod(HttpServletRequest request,
 			HttpServletResponse response, HandlerMethod handlerMethod) throws Exception {
-
+		//生成HttpServletRequest适配类
 		ServletWebRequest webRequest = new ServletWebRequest(request, response);
 		try {
 			WebDataBinderFactory binderFactory = getDataBinderFactory(handlerMethod);

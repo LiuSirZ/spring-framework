@@ -367,11 +367,19 @@ class ConstructorResolver {
 	 * to match with the parameters. We don't have the types attached to constructor args,
 	 * so trial and error is the only way to go here. The explicitArgs array may contain
 	 * argument values passed in programmatically via the corresponding getBean method.
-	 * @param beanName the name of the bean
-	 * @param mbd the merged bean definition for the bean
+	 *
+	 * 使用命名工厂方法实例化bean。
+	 * 如果bean定义参数指定一个类，而不是“ factory-bean”，或者使用依赖注入配置的工厂对象本身的实例变量，则该方法可以是静态的。
+	 * <p>实现需要使用RootBeanDefinition中指定的名称遍历静态方法或实例方法（该方法可能会重载），并尝试与参数匹配。
+	 * 我们没有将类型附加到构造函数args上，因此反复试验是此处的唯一方法。
+	 * explicitArgs数组可以包含通过相应的getBean方法以编程方式传递的参数值。
+	 *
+	 * @param beanName the name of the bean -> bean名字
+	 * @param mbd the merged bean definition for the bean -> bean定义
 	 * @param explicitArgs argument values passed in programmatically via the getBean
 	 * method, or {@code null} if none (-> use constructor argument values from bean definition)
-	 * @return a BeanWrapper for the new instance
+	 * 显式参数
+	 * @return a BeanWrapper for the new instance -> 新实例的Bean包装器
 	 */
 	public BeanWrapper instantiateUsingFactoryMethod(
 			String beanName, RootBeanDefinition mbd, @Nullable Object[] explicitArgs) {
