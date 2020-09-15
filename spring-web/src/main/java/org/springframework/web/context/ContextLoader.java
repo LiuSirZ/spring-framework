@@ -252,8 +252,13 @@ public class ContextLoader {
 	 * using the application context provided at construction time, or creating a new one
 	 * according to the "{@link #CONTEXT_CLASS_PARAM contextClass}" and
 	 * "{@link #CONFIG_LOCATION_PARAM contextConfigLocation}" context-params.
-	 * @param servletContext current servlet context
-	 * @return the new WebApplicationContext
+	 *
+	 * 为给定的servlet上下文初始化Spring的web应用上下文
+	 * 使用在构造时所提供的应用程序上下文 或者创建一个新的 根据
+	 * {@link #CONTEXT_CLASS_PARAM contextClass}和
+	 * {@link #CONFIG_LOCATION_PARAM contextConfigLocation} 上下文参数。
+	 * @param servletContext current servlet context 当前servlet上下文
+	 * @return the new WebApplicationContext	新的Web应用上下文
 	 * @see #ContextLoader(WebApplicationContext)
 	 * @see #CONTEXT_CLASS_PARAM
 	 * @see #CONFIG_LOCATION_PARAM
@@ -275,20 +280,23 @@ public class ContextLoader {
 		try {
 			// Store context in local instance variable, to guarantee that
 			// it is available on ServletContext shutdown.
+			// 保存上下文到本地实现属性 以确保它在ServletContext关闭时可用。
 			if (this.context == null) {
 				this.context = createWebApplicationContext(servletContext);
 			}
 			if (this.context instanceof ConfigurableWebApplicationContext) {
 				ConfigurableWebApplicationContext cwac = (ConfigurableWebApplicationContext) this.context;
 				if (!cwac.isActive()) {
-					// The context has not yet been refreshed -> provide services such as
-					// setting the parent context, setting the application context id, etc
+					// The context has not yet been refreshed -> provide services such as setting the parent context, setting the application context id, etc
+					// 这个上下文还没有被刷新 -> 提供诸如设置父上下文，设置应用程序上下文ID等服务。
 					if (cwac.getParent() == null) {
 						// The context instance was injected without an explicit parent ->
 						// determine parent for root web application context, if any.
+						// 这个上下文实现被拒绝因为没有一个显性的父类 -> 确定根Web应用程序上下文的父级（如果有）。
 						ApplicationContext parent = loadParentContext(servletContext);
 						cwac.setParent(parent);
 					}
+
 					configureAndRefreshWebApplicationContext(cwac, servletContext);
 				}
 			}
@@ -396,8 +404,9 @@ public class ContextLoader {
 		if (env instanceof ConfigurableWebEnvironment) {
 			((ConfigurableWebEnvironment) env).initPropertySources(sc, null);
 		}
-
+		//定制上下文
 		customizeContext(sc, wac);
+		//上下文加载
 		wac.refresh();
 	}
 

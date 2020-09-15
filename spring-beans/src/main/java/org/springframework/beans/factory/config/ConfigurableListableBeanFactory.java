@@ -150,10 +150,13 @@ public interface ConfigurableListableBeanFactory
 
 	/**
 	 * Ensure that all non-lazy-init singletons are instantiated, also considering
+	 * 确保所有非延迟初始单例都实例化，同时考虑
 	 * {@link org.springframework.beans.factory.FactoryBean FactoryBeans}.
 	 * Typically invoked at the end of factory setup, if desired.
+	 * 如果需要，通常在工厂设置结束时调用。
 	 * @throws BeansException if one of the singleton beans could not be created.
 	 * Note: This may have left the factory with some beans already initialized!
+	 * 这可能已经离开工厂，并且已经初始化了一些bean！
 	 * Call {@link #destroySingletons()} for full cleanup in this case.
 	 * @see #destroySingletons()
 	 */
